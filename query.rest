@@ -1,0 +1,25 @@
+POST http://localhost:4000/login
+Content-Type: application/json
+
+{
+    "username": "Roman",
+    "password": "hex"
+}
+
+###
+
+POST http://localhost:4000/refresh
+Content-Type: application/json
+
+{
+    "refreshToken": ""
+}
+
+###
+
+GET  http://localhost:4000/tests
+Authorization: Bearer token
+
+###
+POST http://localhost:4000/logout
+Authorization: Bearer token
