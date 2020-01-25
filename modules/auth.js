@@ -56,6 +56,7 @@ router.post('/logout', checkToken, async(req, res) => {
     const { userID } = req.user;
     await tokensMongo.deleteMany({userID});
 
+    // Response
     res.status(200).send('Ok');
 })
 
@@ -89,6 +90,12 @@ async function checkToken(req, res, next) {
     if (!user)
         return res.status(401).send('Invalid token');
 
+    // Expired token
+    if (user.expires.getTime() <= Date.now()) {
+        await tokensMongo.deleteOne({token});
+        return res.status(401).send('Token expired');
+    }
+
     req.user = user;
     next();
 }
@@ -106,8 +113,8 @@ async function issueToken(userID, agent) {
     new tokensMongo ({userID, token, agent}).save();
 
     return {
-        token: jwt.sign({userID}, process.env.secret, {expiresIn: '1h'}),
-        refreshToken: token
+        jwt: jwt.sign({userID}, process.env.secret, {expiresIn: '1h'}),
+        token: token
     }
 }
 

@@ -34,6 +34,11 @@ const tokensSchema = new mongoose.Schema({
     agent: {
         type: String,
         required: true
+    },
+    expires: {
+        type: Date,
+        required: true,
+        default: () => Date.now() + 1000 * 60 * 60 * 24 * 90
     }
 });
 

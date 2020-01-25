@@ -26,8 +26,8 @@ password | Пароль | String     | [a-zA-Z0-9]
 **Пример ответа:**
 ```
 {
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI1ZTI5YWZhMjA4YmUyMTY1YmU2MDA5OTEiLCJpYXQiOjE1Nzk3OTAzMDMsImV4cCI6MTU3OTc5MzkwM30.uYgxSIExPltGaIYZrVTwiusMyO_lODy0kL1rV8A__wY",
-    "refreshToken": "7cb5a0d8-9ded-4a94-8b57-8217c6fe5fc0"
+    "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI1ZTI5YWZhMjA4YmUyMTY1YmU2MDA5OTEiLCJpYXQiOjE1Nzk3OTAzMDMsImV4cCI6MTU3OTc5MzkwM30.uYgxSIExPltGaIYZrVTwiusMyO_lODy0kL1rV8A__wY",
+    "token": "7cb5a0d8-9ded-4a94-8b57-8217c6fe5fc0"
 }
 ```
 
@@ -47,8 +47,8 @@ token    | token    | String   | uuID
 Пример ответа:
 ```
 {
-    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI1ZTI5YWZhMjA4YmUyMTY1YmU2MDA5OTEiLCJpYXQiOjE1Nzk3OTAzMDMsImV4cCI6MTU3OTc5MzkwM30.uYgxSIExPltGaIYZrVTwiusMyO_lODy0kL1rV8A__wY",
-    "refreshToken": "7cb5a0d8-9ded-4a94-8b57-8217c6fe5fc0"
+    "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI1ZTI5YWZhMjA4YmUyMTY1YmU2MDA5OTEiLCJpYXQiOjE1Nzk3OTAzMDMsImV4cCI6MTU3OTc5MzkwM30.uYgxSIExPltGaIYZrVTwiusMyO_lODy0kL1rV8A__wY",
+    "token": "7cb5a0d8-9ded-4a94-8b57-8217c6fe5fc0"
 }
 ```
 
