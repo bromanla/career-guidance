@@ -10,16 +10,31 @@ const usersSchema = new mongoose.Schema({
     },
     password: {
         type: String,
+        required: true
+    },
+    role: {
+        type: Number,
         required: true,
-        unique: true
+        default: 1
+    },
+    classroom: {
+        type: Number
+    },
+    classrooms: {
+        type: Array
+    },
+    children: {
+        type: Array,
+        required: true
     },
     tests: {
-        type: Object,
-        default: {}
+        type: Object
     }
-}, {
+}
+, {
     minimize: false
-});
+}
+);
 
 const tokensSchema = new mongoose.Schema({
     userID: {
@@ -43,4 +58,4 @@ const tokensSchema = new mongoose.Schema({
 });
 
 module.exports.usersMongo = mongoose.model('users', usersSchema);
-module.exports.tokensMongo = mongoose.model('tokens', tokensSchema)
+module.exports.tokensMongo = mongoose.model('tokens', tokensSchema);

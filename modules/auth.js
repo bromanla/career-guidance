@@ -1,9 +1,7 @@
-const express = require('express');
-const router = express.Router();
-
-const mongoose = require('./mongo/connection');
 const { usersMongo, tokensMongo } = require('./mongo/schemas');
 
+const express = require('express');
+const router = express.Router();
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
 const uuid = require('uuid/v4');
@@ -13,16 +11,8 @@ const bcrypt = require('bcryptjs');
 router.post('/login', async (req, res) => {
     const {username, password} = req.body;
 
-    // Check data type
-    if (typeof username !== 'string' || typeof password !== 'string')
-        return res.status(401).send('Incorrect data')
-
-    // Validation username and password
-    if (!validator.isAlphanumeric(username, ['en-US']) && !validator.isAlphanumeric(username, ['en-US']))
-        return res.status(401).send('Incorrect data');
-
     // Search for a username in the database
-    let user = await usersMongo.findOne({username});
+    let user = await usersMongo.findOne({username}, {tests: false});
 
     if (!user)
         return res.status(401).send('Incorrect username');
@@ -34,8 +24,7 @@ router.post('/login', async (req, res) => {
 
     const agent = req.headers['user-agent'];
 
-    // Response
-    res.send(await issueToken(user.id, agent))
+    res.send(await issueToken(user, agent));
 })
 
 // Get a new tokens
@@ -44,10 +33,10 @@ router.post('/refresh', checkToken, async (req, res) => {
     const { token } = req.user;
     await tokensMongo.deleteOne({token});
 
+    const user  = await usersMongo.findById(req.user.userID, {tests: false});
     const agent = req.headers['user-agent'];
 
-    // Response
-    res.send(await issueToken(req.user.userID, agent))
+    res.send(await issueToken(user, agent));
 })
 
 // Logout all devices
@@ -56,7 +45,6 @@ router.post('/logout', checkToken, async(req, res) => {
     const { userID } = req.user;
     await tokensMongo.deleteMany({userID});
 
-    // Response
     res.status(200).send('Ok');
 })
 
@@ -66,11 +54,8 @@ router.post('/logoutOne', checkToken, async(req, res) => {
     const { token } = req.user;
     await tokensMongo.deleteOne({token});
 
-    // Response
     res.status(200).send('Ok');
 })
-
-/* Functions's */
 
 // Middleware for check token
 async function checkToken(req, res, next) {
@@ -101,8 +86,10 @@ async function checkToken(req, res, next) {
 }
 
 // Generate new tokens
-async function issueToken(userID, agent) {
+async function issueToken(user, agent) {
     // Count of authorized devices
+    const userID = user.id;
+
     const count = await tokensMongo.countDocuments({userID});
 
     if (count >= 10)
@@ -112,8 +99,16 @@ async function issueToken(userID, agent) {
 
     new tokensMongo ({userID, token, agent}).save();
 
+    const payload = {
+        userID,
+        role: user.role,
+        classroom: user.classroom,
+        children: user.children.length ? user.children : undefined,
+        classrooms: user.classrooms.length ? user.classrooms : undefined
+    }
+
     return {
-        jwt: jwt.sign({userID}, process.env.secret, {expiresIn: '1h'}),
+        jwt: jwt.sign(payload, process.env.secret, {expiresIn: '1h'}),
         token: token
     }
 }

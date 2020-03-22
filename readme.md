@@ -2,9 +2,38 @@
 
 > **Внимание!** Описание API находится в режиме разработки.
 
-Json Web Token содержит id пользователя. Время жизни 1 час. Для получения доступа к методам пользователя клиент в заголовке должен отправить Authorization: Bearer \<JWT>.
+## **JWT**
+Json Web Token содержит полезную нагрузку пользователя (payload). Время жизни 1 час. Для получения доступа к методам, клиент должен отправить в заголовке: ```Authorization: Bearer <JWT>```
 
-token - одноразовый токен, с помощью которого получаем новую пару token, jwt или обращаемся к методам logout & logoutOne
+**Обозначение ролей:**
+
+Параметр    | Описание | Заметка
+------------|----------|---------
+0           | Student  |
+1           | Parent   |
+3           | Teacher  | В разрабокте
+4           | Admin    | В разработке
+
+**Student**
+Параметр    | Тип      | Описание
+------------|----------|---------
+role        | Number   | Роль
+classroom   | Number   | Класс
+
+**Parent**
+Параметр    | Тип      | Описание
+------------|----------|---------
+role        | Number   | Роль
+children    | Array    | Массив имен детей
+
+**Teacher**
+Параметр    | Тип      | Описание
+------------|----------|---------
+role        | Number   | Роль
+classrooms  | Array    | Массив классов
+
+## **Token**
+Одноразовый токен для получения новых ключей или обращения к некоторым методам
 
 ---
 
@@ -17,16 +46,16 @@ Content-Type: application/json
 
 **Тело запроса:**
 
-Параметр | Описание | Тип      | Варианты
----------|----------|----------|--------------
-username | Логин пользователя  | String | [a-zA-Z0-9]
-password | Пароль | String     | [a-zA-Z0-9]
+Параметр | Описание           | Тип    | Варианты
+---------|--------------------|--------|--------------
+username | Логин пользователя | String | [a-zA-Z0-9]
+password | Пароль             | String | [a-zA-Z0-9]
 
 
 **Пример ответа:**
 ```
 {
-    "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI1ZTI5YWZhMjA4YmUyMTY1YmU2MDA5OTEiLCJpYXQiOjE1Nzk3OTAzMDMsImV4cCI6MTU3OTc5MzkwM30.uYgxSIExPltGaIYZrVTwiusMyO_lODy0kL1rV8A__wY",
+    "jwt": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySUQiOiI1ZTVmM2UwZDdlMzZkZjA4MzQ2YTYwNDgiLCJyb2xlIjoxLCJjaGlsZHJlbiI6WyJSb21hbiJdLCJpYXQiOjE1ODQ4NzUwMjAsImV4cCI6MTU4NDg3ODYyMH0.4Ixo893mcFeq-5w6oOh8_o0HF41X1xKH-rD0q3ZTT7U",
     "token": "7cb5a0d8-9ded-4a94-8b57-8217c6fe5fc0"
 }
 ```
@@ -63,85 +92,7 @@ Content-Type: application/json
 
 Параметр | Описание | Тип      | Варианты
 ---------|----------|----------|--------------
-token    | token    | String   | uuID
-
-
-**Пример ответа:**
-```
-Ok
-```
-
-## **Получить все тестирования**
-
-```GET /tests```
-
-Authorization: Bearer \<JWT>
-
-**Пример ответа:**
-```
-{
-    "first": 90
-    "second": 10
-}
-```
-
-
-## **Получить по имени теста**
-
-```GET /tests/{nameTest}```
-
-Authorization: Bearer \<JWT>
-
-**Параметры запроса:**
-
-Параметр | Описание | Тип      | Варианты
----------|----------|----------|--------------
-nameTest | Имя теста| String   | [a-zA-Z0-9]
-
-**Пример ответа:**
-```
-{
-    "first": 100
-}
-```
-
-
-## **Добавить/Изменить тест**
-
-```PATCH /tests/{nameTest}```
-
-Authorization: Bearer \<JWT>
-Content-Type: application/json
-
-**Параметры запроса:**
-
-Параметр | Описание | Тип      | Варианты
----------|----------|----------|--------------
-nameTest | Имя теста| String   | [a-zA-Z0-9]
-
-**Тело запроса:**
-
-Параметр | Описание | Тип      | Варианты
----------|----------|----------|--------------
-score    | Оценка   | Number   | [0-9]
-
-**Пример ответа:**
-```
-Ok
-```
-
-
-## **Удалить тест**
-
-```DELETE /tests/{nameTest}```
-
-Authorization: Bearer \<JWT>
-
-**Параметры запроса:**
-
-Параметр | Описание | Тип      | Варианты
----------|----------|----------|--------------
-nameTest | Имя теста| String   | [a-zA-Z0-9]
+token    | token    | String   | uuid(4)
 
 
 **Пример ответа:**
@@ -168,4 +119,83 @@ Authorization: Bearer \<JWT>\
         "agent": "vscode-restclient"
     }
 ]
+```
+
+## **Только для Student**
+---
+## **Получить все тестирования**
+
+```GET /s/tests```
+
+Authorization: Bearer \<JWT>
+
+**Пример ответа:**
+```
+{
+    "First": {
+        "mm": 30,
+        "mn": 10,
+        "mt": 20,
+        "ms": 10,
+        "ma": 30
+    },
+    "Second": {
+        "mm": 2,
+        "mn": 2,
+        "mt": 2,
+        "ms": 2,
+        "ma": 10
+    }
+}
+```
+
+
+## **Изменить/Добавить тестсирование**
+
+```PATCH /s/tests```
+
+Authorization: Bearer \<JWT>
+
+**Тело запроса:**
+
+Параметр | Описание                     | Тип      | Варианты
+---------|------------------------------|----------|----------
+mm       | Человек человек              | Number   | [0-100]
+mn       | Человек природа              | Number   | [0-100]
+mt       | Человек техника              | Number   | [0-100]
+ms       | Человек знаковая             | Number   | [0-100]
+ma       | Человек художественный образ | Number   | [0-100]
+
+**Пример ответа:**
+```
+ok
+```
+
+## **Только для Parent**
+---
+## **Получить все тестирования ребенка**
+```GET /p/tests/{username}```
+
+Authorization: Bearer \<JWT>
+
+username хранится в payload
+
+**Пример ответа:**
+```
+{
+    "First": {
+        "mm": 30,
+        "mn": 10,
+        "mt": 20,
+        "ms": 10,
+        "ma": 30
+    },
+    "Second": {
+        "mm": 2,
+        "mn": 2,
+        "mt": 2,
+        "ms": 2,
+        "ma": 10
+    }
+}
 ```
