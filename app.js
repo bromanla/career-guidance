@@ -12,7 +12,7 @@ const rateLimit = require('express-rate-limit');
 app.use(jwtMiddleware({
     secret: process.env.secret
 }).unless({
-    path: [/^\/auth\//, '/agent']
+    path: [/^\/auth\//]
 }));
 
 app.use(rateLimit({
@@ -33,7 +33,7 @@ app.use('/agent', require('./modules/agent'));
 
 app.use('/s/', require('./modules/roles/student'));
 app.use('/p/', require('./modules/roles/parent'));
-app.use('/t/', require('./modules/roles/student'));
+app.use('/t/', require('./modules/roles/teacher'));
 app.use('/a/', require('./modules/roles/admin'));
 
 app.use((req, res) => res.status(404).send('Nothing'))

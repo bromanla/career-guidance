@@ -15,7 +15,7 @@ router.get('/tests', async (req, res) => {
     const id = req.user.userID;
     const {tests} = await usersMongo.findById(id, {tests: true, _id: false});
 
-    res.json(tests);
+    res.json(tests || []);
 })
 
 // Add or update test

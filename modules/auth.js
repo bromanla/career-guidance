@@ -29,7 +29,6 @@ router.post('/login', async (req, res) => {
 
 // Get a new tokens
 router.post('/refresh', checkToken, async (req, res) => {
-    // Delete old token
     const { token } = req.user;
     await tokensMongo.deleteOne({token});
 
@@ -41,7 +40,6 @@ router.post('/refresh', checkToken, async (req, res) => {
 
 // Logout all devices
 router.post('/logout', checkToken, async(req, res) => {
-    // Delete all devices
     const { userID } = req.user;
     await tokensMongo.deleteMany({userID});
 
@@ -50,7 +48,6 @@ router.post('/logout', checkToken, async(req, res) => {
 
 // Logout one device
 router.post('/logoutOne', checkToken, async(req, res) => {
-    // Delete one token
     const { token } = req.user;
     await tokensMongo.deleteOne({token});
 

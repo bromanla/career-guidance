@@ -5,20 +5,7 @@ const router = express.Router();
 const validator = require('validator');
 
 router.use((req, res, next) => {
-    if (req.user.role === 4)
-        return next()
-
-    res.status(403).send('Forbidden');
-})
-
-// Get all test
-router.get('/', async (req, res) => {
-
-})
-
-// Add or update tets
-router.patch('/:nameTest', async (req, res) => {
-
+    return req.user.role === 3 ? next() : res.status(403).send('Forbidden')
 })
 
 module.exports = router;
