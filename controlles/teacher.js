@@ -1,14 +1,9 @@
 const {usersMongo} = require('../mongo/schemas');
-const {testsValid, validate} = require('../validation');
 
-const express = require('express');
-const router = express.Router();
-const {matchedData} = require('express-validator');
+const router = require('express').Router();
 
 // Role teacher
-router.use((req, res, next) => {
-    return req.user.role === 2 ? next() : res.status(403).send('Forbidden')
-})
+router.use((req, res, next) => req.user.role === 2 ? next() : res.status(403).send('Forbidden'))
 
 // Get owned students
 router.get('/students', async (req, res) => {
@@ -62,4 +57,4 @@ router.delete('/tests/:username/:nameTest', async (req, res) => {
     res.status(201).send('ok');
 })
 
-module.exports = router;
+module.exports = {path: /t/, router};

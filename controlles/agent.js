@@ -1,7 +1,6 @@
-const express = require('express');
-const router = express.Router();
+const router = require('express').Router();
 
-const {tokensMongo} = require('./mongo/schemas');
+const {tokensMongo} = require('../mongo');
 
 // Get authorized devices
 router.get('/', async (req, res) => {
@@ -11,4 +10,4 @@ router.get('/', async (req, res) => {
     res.json(agent);
 })
 
-module.exports = router;
+module.exports = {path: '/agent', router};

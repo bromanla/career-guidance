@@ -1,46 +1,22 @@
 'use strict';
-
 require('dotenv').config();
-require('./modules/mongo/connection');
 
-const express = require('express');
-const app = express();
-const jwtMiddleware = require('express-jwt');
-const rateLimit = require('express-rate-limit');
+const app = require('express')();
+const handlers = require('./handlers');
+const routes = require('./controlles');
+// require('./preview')
 
 /* Middleware */
-app.use(jwtMiddleware({
-    secret: process.env.secret
-}).unless({
-    path: [/^\/auth\//]
-}));
-
-app.use(rateLimit({
-    windowMs: 60 * 1000,
-    max: 100
-}));
-
-app.use(express.json({
-    limit: '100kb'
-}));
-
-// Error handler for parse json
-app.use((err, req, res, next) => err ? res.status(err.status).send(err.message) : next());
+handlers.forEach((h) => app.use(h));
 
 // Routes
-app.use('/auth', require('./modules/auth'));
-app.use('/agent', require('./modules/agent'));
+routes.forEach(({path, router}) => app.use(path, router))
 
-app.use('/s/', require('./modules/roles/student'));
-app.use('/p/', require('./modules/roles/parent'));
-app.use('/t/', require('./modules/roles/teacher'));
-app.use('/a/', require('./modules/roles/admin'));
-
-app.use((req, res) => res.status(404).send('Nothing'))
+app.use((_, res) => res.status(404).send('Nothing'))
 
 app.listen(process.env.port, (err) => {
     if (err)
         return console.error('Error start');
 
-    console.log('Server is run');
+    console.info('REST server is run');
 });

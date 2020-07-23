@@ -1,0 +1,1 @@
+module.exports = async (err, req, res, next) => err ? res.status(err.status).send(err.message) : next()
