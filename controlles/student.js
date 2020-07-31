@@ -1,17 +1,19 @@
 const {testsMongo} = require('../mongo/schemas');
+const {getTests, getStat} = require('./methods');
 
 const router = require('express').Router();
-const {isAlphanumeric, isAlphanumericLocales} = require('validator');
 
 // Role student
 router.use((req, res, next) => req.user.role === 0 ? next() : res.status(403).send('Forbidden'))
 
 // Get all test
 router.get('/tests', async (req, res) => {
-    const id = req.user.userID;
-    const tests = await testsMongo.find({passedBy: id}, {passedBy: false}).lean();
+    res.json(await getTests(req.user.userID, req.query.page));
+})
 
-    res.json(tests);
+// Sum of all test results (for visualization)
+router.get('/statistics', async (req, res) => {
+    res.json(await getStat(req.user.userID));
 })
 
 // Add tests
@@ -20,7 +22,7 @@ router.post('/tests', async (req, res) => {
     let {title, ...test} = req.body;
     title = String (title)
 
-    if (!/^[(a-z)(0-9)(а-яё)\s]+$/i.test(title))
+    if (!/^[(a-z)(0-9)(а-яё)\s$]+$/i.test(title))
         return res.status(400).send('Validation error')
 
     const alreadyHave = await testsMongo.findOne({title, passedBy}).countDocuments();
