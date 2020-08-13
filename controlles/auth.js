@@ -88,7 +88,7 @@ async function issueToken(user, agent) {
 
     const count = await tokensMongo.countDocuments({userID});
 
-    if (count >= 3)
+    if (count >= 10)
         await tokensMongo.deleteMany({userID});
 
     const token = uuid();

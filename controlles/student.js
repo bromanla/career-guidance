@@ -22,7 +22,7 @@ router.post('/tests', async (req, res) => {
     let {title, ...test} = req.body;
     title = String (title)
 
-    if (!/^[(a-z)(0-9)(а-яё)\s$]+$/i.test(title))
+    if (!/^[(a-z)(0-9)(а-яё)\s$]+$/i.test(title) || !req.body.title)
         return res.status(400).send('Validation error')
 
     const alreadyHave = await testsMongo.findOne({title, passedBy}).countDocuments();
