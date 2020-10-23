@@ -15,17 +15,9 @@ const usersSchema = new mongoose.Schema({
         required: true,
         default: 0
     },
-    classroom: {
+    birthday: {
         type: Number
-    },
-    classrooms: {
-        type: Array
-    },
-    children: [{
-        type: mongoose.Schema.Types.ObjectId,
-        require: true,
-        ref: 'users'
-    }]
+    }
 }, {
     versionKey: false
 });

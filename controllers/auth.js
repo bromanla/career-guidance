@@ -1,17 +1,18 @@
-const {usersMongo, tokensMongo} = require('../mongo');
+const { usersMongo, tokensMongo, classesMongo } = require('../mongo');
 
-const router = require('express').Router();
-const validator = require('validator');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcryptjs');
-const {v4: uuid} = require('uuid');
+const
+    router = require('express').Router(),
+    validator = require('validator'),
+    jwt = require('jsonwebtoken'),
+    bcrypt = require('bcryptjs'),
+    { v4: uuid } = require('uuid');
 
 // Authorization users
 router.post('/login', async (req, res) => {
-    const {username, password} = req.body;
+    const { username, password } = req.body;
 
     // Search for a username in the database
-    const user = await usersMongo.findOne({username}).populate('children', 'username').lean();
+    const user = await usersMongo.findOne({username}).lean();
 
     if (!user)
         return res.status(401).send('Incorrect username');
@@ -21,18 +22,18 @@ router.post('/login', async (req, res) => {
     if (!isComparison)
         return res.status(401).send('Incorrect password');
 
-    const agent = req.headers['user-agent'];
+    const agent = req.headers['user-agent'] || 'Undefined';
 
     res.send(await issueToken(user, agent));
 })
 
 // Get a new tokens
 router.post('/refresh', checkToken, async (req, res) => {
-    const {token} = req.user;
+    const { token } = req.user;
     await tokensMongo.deleteOne({token});
 
-    const user  = await usersMongo.findById(req.user.userID).populate('children', 'username').lean();
-    const agent = req.headers['user-agent'];
+    const user  = await usersMongo.findById(req.user.userID).lean();
+    const agent = req.headers['user-agent'] || 'Undefined';
 
     res.send(await issueToken(user, agent));
 })
@@ -55,7 +56,7 @@ router.post('/logoutOne', checkToken, async(req, res) => {
 
 // Middleware for check token
 async function checkToken(req, res, next) {
-    const {token} = req.body;
+    const { token } = req.body;
 
     // Check data type
     if (typeof token !== 'string')
@@ -95,12 +96,23 @@ async function issueToken(user, agent) {
 
     await new tokensMongo({userID, token, agent}).save();
 
-    const payload = {
-        userID,
-        role: user.role,
-        classroom: user.classroom,
-        children: user.children.length ? user.children.map(({_id, username}) => ({id: _id, username})) : undefined,
-        classrooms: user.classrooms.length ? user.classrooms : undefined
+    // Create JWT
+    const payload = {userID, role: user.role}
+
+    switch (user.role) {
+        // Student
+        case 0: {
+            const classroom = await classesMongo.findOne({students: {$in: user._id}}, {classroom: true}).lean() || {};
+
+            payload.classroom = classroom.classroom ? classroom.classroom : null;
+            break;
+        }
+        // Teacher
+        case 2: {
+            const classrooms = await classesMongo.find({teachers: {$in: user._id}}, {classroom: true}).lean();
+            payload.classrooms = classrooms.map(el => el.classroom);
+            break;
+        }
     }
 
     return {

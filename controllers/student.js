@@ -1,7 +1,8 @@
-const {testsMongo} = require('../mongo/schemas');
-const {getTests, getStat} = require('./methods');
-
-const router = require('express').Router();
+const
+    { testsMongo } = require('../mongo'),
+    { getTests, getStat } = require('./methods'),
+    { isMongoId } = require('validator'),
+    router = require('express').Router();
 
 // Role student
 router.use((req, res, next) => req.user.role === 0 ? next() : res.status(403).send('Forbidden'))
@@ -40,9 +41,14 @@ router.post('/tests', async (req, res) => {
 
 // Update test
 router.put('/tests/:id', async (req, res) => {
-    const passedBy = req.user.userID;
-    const {id} = req.params;
-    let test = req.body;
+    const
+        passedBy = req.user.userID,
+        { id } = req.params,
+        test = req.body;
+
+    // Validation Id test
+    if (!isMongoId(id + ''))
+        return res.status(401).send('Incorrect testId');
 
     testsMongo.findOneAndUpdate({_id: id, passedBy}, test, {runValidators: true})
         .then((exists) => {

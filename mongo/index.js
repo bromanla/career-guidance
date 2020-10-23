@@ -21,5 +21,6 @@ mongoose.connection.on('error', (err) => {
 module.exports = {
     ...require('./schemas/tests'),
     ...require('./schemas/tokens'),
-    ...require('./schemas/users')
+    ...require('./schemas/users'),
+    ...require('./schemas/classes')
 }
