@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  nodejs:
+    environment:
+        - MONGO_URL=mongodb
+        - TZ=Europe/Moscow
+        - port=8000
+        - NODE_ENV=production
+        - secret=<JWT_SECRET>
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nodejs
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    networks:
+      - app-network
+
+  mongodb:
+    image: mongo:4.4.3
+    container_name: mongodb
+    restart: unless-stopped
+    volumes:
+      - mongo:/data/db
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo:
+    driver: local

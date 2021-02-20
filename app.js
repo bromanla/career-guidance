@@ -1,5 +1,9 @@
 'use strict';
-require('dotenv').config();
+
+if (process.env.NODE_ENV !== 'production') {
+    require('dotenv').config();
+    console.log('Debug mode')
+}
 
 const app = require('express')();
 const handlers = require('./handlers');
@@ -14,10 +18,12 @@ routes.forEach(({path, router}) => app.use(path, router));
 app.use((_, res) => res.status(404).send('Nothing'));
 
 app.listen(process.env.port, (err) => {
-    if (err)
-        return console.error('Error start');
+    if (err) {
+        console.log('Error start');
+        process.exit(1)
+    }
 
-    console.info('REST server is run');
+    console.log('Server is run');
 });
 
 if (process.argv.includes('--preview'))

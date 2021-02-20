@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 mongoose.set('useCreateIndex', true);
 
-mongoose.connect('mongodb://localhost:27017/careerguidance', {
+mongoose.connect(`mongodb://${process.env.MONGO_URL || 'localhost'}:27017/careerguidance`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     promiseLibrary: true,
@@ -10,12 +10,12 @@ mongoose.connect('mongodb://localhost:27017/careerguidance', {
 })
 
 mongoose.connection.on('connected', () => {
-    console.info("Succesfully connected to Mongo");
+    console.log('Succesfully connected to Mongo');
 });
 
 mongoose.connection.on('error', (err) => {
-    console.error("Database Connection Error: " + err);
-    process.exit(2);
+    console.log('Database Connection Error: ' + err);
+    process.exit(1);
 });
 
 module.exports = {

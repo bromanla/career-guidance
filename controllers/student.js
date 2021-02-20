@@ -29,7 +29,7 @@ router.post('/tests', async (req, res) => {
     const alreadyHave = await testsMongo.findOne({title, passedBy}).countDocuments();
 
     if (alreadyHave) {
-        return res.status(304).send()
+        return res.status(400).send('Test already exists')
     }
 
     test = {...test, passedBy, title};
