@@ -2,7 +2,7 @@
 
 1. Клонировать репозиторий
 ```
-    git clone git@github.com:bromanla/career-guidance.git
+    git clone https://github.com/bromanla/career-guidance.git
 ```
 
 2. Перейти в дирректорию приложения
